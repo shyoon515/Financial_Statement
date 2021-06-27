@@ -21,7 +21,7 @@ def start():
     if user_reply == 1:
         cash()
     if user_reply == 2:
-        two()
+        financial_instrument()
     elif user_reply == 0:
         chapter2.start()
 
@@ -42,7 +42,7 @@ def cash():
 
 
 # 유저입력 01222 -> 2. 단기금융상품(금융기관예치금)
-def two():
+def financial_instrument():
     print("_"*70+"""
 초기화면/박 회계사의 재무제표 분석법/재무상태표로 기업의 재무 상태 파악하기/재무상태표/단기금융상품(금융기관예치금)
 """)

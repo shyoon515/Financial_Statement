@@ -1,4 +1,4 @@
-import dart_fss as dart
+import pandas as pd
 
 import SearchCorp
 import RequestFactors as rf
@@ -8,7 +8,8 @@ import sys
 sys.path.append("/workspace/Financial_Statement/src")
 
 
-def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):    # list 안에는 rf객체들이 들어있어야 한다. 원하는 조건을 dict 형태로 반환한다.
+# list 안에는 rf객체들이 들어있어야 한다. 원하는 조건을 dict 형태로 반환한다.
+def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):
     from ProgramMain import corp_list
     essential_cds = {}
     selective_cds = {}
@@ -26,7 +27,7 @@ def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):    # list 
             essential_cds[condition.name] = value
 
     #선택 인자 셋팅
-    if list_of_selective_cds == []:
+    if list_of_selective_cds != []:
         resp = 1
         while resp != 0:
             selective_cds_kor_names = []
@@ -39,11 +40,7 @@ def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):    # list 
             new_string.append(" 중 추가할 검색 요소를 입력하세요. 없으면 0을 입력하세요.\n")
             instructions = ''.join(new_string)
 
-            try:
-                resp = input(instructions)
-            except UnicodeDecodeError:
-                print("유니코드 에러가 발생하였습니다. 이 메시지가 연속적으로 반복된다면 개발자에게 보고 바랍니다. \n")
-                resp = ue.prevent_error(resp)
+            resp = ue.usr_reply(instructions)
 
             if resp == "0":
                 resp = 0
@@ -65,8 +62,8 @@ def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):    # list 
     condition_info.update(selective_cds)
     return condition_info
 
-
-def get_url(request_url, condition_info={}):    #request_url: 요청 url json 형태, condition_info: get_url_info의 반환값. 조건에 맞는 url을 string으로 반환한다.
+# request_url: 요청 url 형태, condition_info: get_url_info의 반환값. 조건에 맞는 url을 string으로 반환한다.
+def get_url(request_url, condition_info={}):
     from ProgramMain import api_key
     url = request_url+"?crtfc_key="+api_key
     for condition in condition_info:

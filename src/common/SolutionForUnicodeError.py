@@ -1,8 +1,7 @@
-def prevent_error(txt):
+def usr_reply(instruction_msg):
     try:
-        txt = txt
+        txt = input(instruction_msg)
         return txt
     except UnicodeDecodeError:
-        print("유니코드 에러가 발생하였습니다. 이 메시지가 연속적으로 반복된다면 개발자에게 보고 바랍니다. \n")
-        txt = prevent_error(txt)
-        return txt
+        print("유니코드 에러가 발생하였습니다. 인코딩 불안정이 원인이므로, 한 번 더 입력해주세요. \n")
+        return usr_reply(instruction_msg)

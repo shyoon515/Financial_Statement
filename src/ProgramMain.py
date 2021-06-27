@@ -14,6 +14,7 @@ import RequestFactors as rf
 # API 인증키의 입력 및 인증과, 기업 정보 로딩을 1회만 하기 위해 전역변수 api_key, corp_list를 미리 선언
 api_key = None
 corp_list = None
+corp_list_staus = 0
 
 # 프로그램 상태 0
 def ProgramStart():
@@ -22,28 +23,20 @@ def ProgramStart():
     """)
     user_reply = int(input("""
 기능을 선택해주세요(정수 입력).
-1. 박 회계사의 재무제표 분석법(공시정보 가져오기-최초 1회만 로딩)    0. 프로그램 종료하기
+1. 박 회계사의 재무제표 분석법(공시정보 로드하기-최초 1회만 로딩)    0. 프로그램 종료하기
 """))
 
     if user_reply == 1:
         global api_key
         global corp_list
+        global corp_list_staus
         
         if api_key == None:
             api_key = get_API()
-        if corp_list == None:
-            corp_list = update_corp_list()    # API 인증키의 입력 및 인증과 기업 정보 로딩을 1회만 하기 위한 장치.
-
-        list_of_selective_cds=[
-            rf.corp_code, rf.bgn_de, rf.end_de, rf.last_reprt_at, rf.pblntf_ty, rf.pblntf_detail_ty, rf.corp_cls, rf.sort, rf.sort_mth, rf.page_no, rf.page_count
-        ]        
-        condition_info = UrlGenerator.get_url_info(list_of_selective_cds=list_of_selective_cds)
-        
-        request_url = "https://opendart.fss.or.kr/api/list.json"
-        url = UrlGenerator.get_url(request_url=request_url, condition_info=condition_info)    # '공시정보' API에 접속할 url을 저장. url은 이 메쏘드에서 사용자로부터 정보를 받아 형성된다.
-        response = UrlToInfo.get_info_from_url(url)    # 만들어진 url로 '공시정보'에서 모든 인자들을 pandans DataFrame 객체로 반환해준다.
-        print(tabulate(response, headers='keys', tablefmt='psql'))
-    
+        if corp_list_staus == 0:
+            print("\n\nDART에서 기업 정보를 로딩 중입니다. 잠시만 기다려주십시오...\n")
+            corp_list = update_corp_list(api_key)    # API 인증키의 입력 및 인증과 기업 정보 로딩을 1회만 하기 위한 장치, pandans DataFrame 객체이다.
+            corp_list_staus = 1
         ParkFS()
     elif user_reply == 0:
         End()
@@ -58,9 +51,10 @@ def get_API():
     return api_key
 
 
-def update_corp_list():
+def update_corp_list(api_key):
     # 모든 상장된 기업 리스트 불러오기
-    corp_list = dart.get_corp_list()
+    url = "https://opendart.fss.or.kr/api/corpCode.xml?crtfc_key="+api_key
+    corp_list = UrlToInfo.load_company_lists(url)
     return corp_list
 
 
