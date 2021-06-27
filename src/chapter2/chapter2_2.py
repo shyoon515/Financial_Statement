@@ -1,4 +1,5 @@
 import chapter2
+import Chapter2APIs
 
 # 유저입력 0122
 def start():
@@ -19,6 +20,8 @@ def start():
 """))
     if user_reply == 1:
         cash()
+    if user_reply == 2:
+        two()
     elif user_reply == 0:
         chapter2.start()
 
@@ -39,7 +42,7 @@ def cash():
 
 
 # 유저입력 01222 -> 2. 단기금융상품(금융기관예치금)
-def cash():
+def two():
     print("_"*70+"""
 초기화면/박 회계사의 재무제표 분석법/재무상태표로 기업의 재무 상태 파악하기/재무상태표/단기금융상품(금융기관예치금)
 """)
@@ -48,9 +51,8 @@ def cash():
 - 차입금이 많은 기업들은 장단기금융상품이 인출 제한된 경우들이 많다. 실질적 인출을 못하므로, 주석사항에서 인출 제한 여부를 살펴봐야 한다.
 - 기업의 현금흐름이 영업, 투자, 재무에서 계속 (-)여서 자금이 마르면 기업의 보유 현금을 분석하자. 또 지난 5~10년 재무상태표의 자본금을 확인하여 그 기업이 유상증자를 빈번하게 했는가 확인하자.
 """)
-    resp = input("1. 기업의 증자/감자 정보와 자본금 상태를 확인하기    2. 이전으로")
+    resp = int(input("1. 기업의 증자/감자 정보와 자본금 상태를 확인하기    2. 이전으로"))
     
     if resp == 1:
-        pass
-       
+        Chapter2APIs.check_recapitalization()
     start()

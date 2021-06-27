@@ -1,7 +1,7 @@
 import dart_fss as dart
 import urllib.request as ul
-from zipfile import ZipFile
-from io import BytesIO
+import pandas as pd
+from tabulate import tabulate
 
 import sys
 sys.path.append("/workspace/Financial_Statement/src/chapter2")
@@ -36,15 +36,14 @@ def ProgramStart():
 
         list_of_selective_cds=[
             rf.corp_code, rf.bgn_de, rf.end_de, rf.last_reprt_at, rf.pblntf_ty, rf.pblntf_detail_ty, rf.corp_cls, rf.sort, rf.sort_mth, rf.page_no, rf.page_count
-        ]
-        
+        ]        
         condition_info = UrlGenerator.get_url_info(list_of_selective_cds=list_of_selective_cds)
         
         request_url = "https://opendart.fss.or.kr/api/list.json"
         url = UrlGenerator.get_url(request_url=request_url, condition_info=condition_info)    # '공시정보' API에 접속할 url을 저장. url은 이 메쏘드에서 사용자로부터 정보를 받아 형성된다.
-        dicts_of_dc_info = UrlToInfo.get_info_from_url(url)    # 만들어진 url로 '공시정보'에서 모든 인자들을 list of dict의 형태로 반환해준다.
-        for i, val in enumerate(dicts_of_dc_info):
-            print(str(i+1),"    ",val,'\n')
+        response = UrlToInfo.get_info_from_url(url)    # 만들어진 url로 '공시정보'에서 모든 인자들을 pandans DataFrame 객체로 반환해준다.
+        print(tabulate(response, headers='keys', tablefmt='psql'))
+    
         ParkFS()
     elif user_reply == 0:
         End()
@@ -63,7 +62,7 @@ def update_corp_list():
     # 모든 상장된 기업 리스트 불러오기
     corp_list = dart.get_corp_list()
     return corp_list
- 
+
 
 def ParkFS():
     print("_"*70+"""
@@ -83,6 +82,7 @@ def ParkFS():
         chapter2()
     elif user_reply == 0:
         ProgramStart()
+
 
 # 유저입력 012
 def chapter2():
