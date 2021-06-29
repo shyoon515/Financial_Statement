@@ -11,11 +11,11 @@ from io import BytesIO
 import xml.etree.ElementTree as elemTree
 import json
 import pandas as pd
+from bs4 import BeautifulSoup
 
 
 # url을 입력하면 xml 형태로, 맨 첫 기업 정보 로드에 필요한 정보를 pandans DataFrame 객체로 반환해주게 된다.
 def load_company_lists(url):
-    print(url)
     request = ul.Request(url)
     response = ul.urlopen(request)
 
@@ -59,13 +59,10 @@ def load_company_lists(url):
 
 # url을 입력하면 json형태로 온 "list" 응답결과를 dict로 반환해주는 코드. 정보를 dict로 추출해온 후, pandas DataFrame 객체로 반환한다.
 def get_info_from_url(url):
-    print(url)
     request = ul.Request(url)
     response = ul.urlopen(request)
     responseData = response.read()
     data = json.loads(responseData)
-
-    print(data)
 
     resp_result = data["list"]
 
@@ -83,3 +80,17 @@ def get_info_from_url(url):
 
     response = pd.DataFrame(rows, columns=col_name)
     return response
+
+def get_xbrl_file(url):
+    request = ul.Request(url)
+    response = ul.urlopen(request)
+
+    with ZipFile(BytesIO(response.read())) as zf:
+        file_list = zf.namelist()
+        while len(file_list) > 0:
+            file_name = file_list.pop()
+            corpCode = zf.open(file_name).read().decode()
+            
+    soup = BeautifulSoup(corpCode, 'lxml')
+    print(soup.prettify())
+

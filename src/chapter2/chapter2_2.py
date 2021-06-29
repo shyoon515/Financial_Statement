@@ -1,3 +1,4 @@
+from tabulate import tabulate
 import chapter2
 import Chapter2APIs
 
@@ -6,8 +7,7 @@ def start():
     print("_"*70+"""
 초기화면/박 회계사의 재무제표 분석법/재무상태표로 기업의 재무 상태 파악하기/자산
 """)
-    user_reply = int(input("""
-1. 현금 및 현금성자산
+    user_reply = int(input("""1. 현금 및 현금성자산
 2. 단기금융상품(금융기관예치금)
 3. 매출채권
 4. 재고자산
@@ -52,7 +52,9 @@ def financial_instrument():
 - 기업의 현금흐름이 영업, 투자, 재무에서 계속 (-)여서 자금이 마르면 기업의 보유 현금을 분석하자. 또 지난 5~10년 재무상태표의 자본금을 확인하여 그 기업이 유상증자를 빈번하게 했는가 확인하자.
 """)
     resp = int(input("1. 기업의 증자/감자 정보와 자본금 상태를 확인하기    2. 이전으로"))
-    
+
     if resp == 1:
-        Chapter2APIs.check_recapitalization()
+        response = Chapter2APIs.check_recapitalization()
+        print(tabulate(response, headers='keys', tablefmt='psql'))
+        Chapter2APIs.check_capital()
     start()

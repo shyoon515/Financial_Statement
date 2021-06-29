@@ -23,10 +23,10 @@ def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):
         if condition.name == 'corp_code':
             essential_cds[condition.name] = SearchCorp.get_corp_code_by_name(corp_list)
         else:
-            value = input(condition.kor_name+"의 검색 값을 입력하세요.\n"+condition.explanation)
+            value = input(condition.kor_name+"의 검색 값을 입력하세요.\n"+condition.explanation+"\n")
             essential_cds[condition.name] = value
 
-    #선택 인자 셋팅
+    # 선택 인자 셋팅
     if list_of_selective_cds != []:
         resp = 1
         while resp != 0:
@@ -51,10 +51,10 @@ def get_url_info(list_of_essential_cds=[], list_of_selective_cds=[]):
             else:
                 try:
                     index = selective_cds_kor_names.index(resp)
-                    value = input(list_of_selective_cds[index].kor_name+"값 입력을 선택하셨습니다.\n"+list_of_selective_cds[index].explanation)
+                    value = input(list_of_selective_cds[index].kor_name+"값 입력을 선택하셨습니다.\n"+list_of_selective_cds[index].explanation+"\n")
                     selective_cds[list_of_selective_cds[index].name] = value
                 except ValueError:
-                    print("key 요소 입력 오류, 다시 입력하세요.")
+                    print("key 요소 입력 오류, 다시 입력하세요.\n")
         else:
             pass
 
@@ -67,7 +67,7 @@ def get_url(request_url, condition_info={}):
     from ProgramMain import api_key
     url = request_url+"?crtfc_key="+api_key
     for condition in condition_info:
-        if condition_info[condition] != '':
+        if (condition_info[condition] != '') and (condition_info[condition] != None):
             condition_info[condition] = "&"+condition+"="+condition_info[condition]
     for condition in condition_info:
         url += condition_info[condition]
